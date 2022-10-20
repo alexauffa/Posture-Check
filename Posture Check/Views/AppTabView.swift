@@ -31,7 +31,7 @@ struct AppTabView: View {
                 .tag(2)
             
             if (TARGET_OS_SIMULATOR != 0) {
-                DeveloperView(accentColor: AppSettings().appAccent)
+                DeveloperView()
                     .tabItem {
                         Label("Developer Mode", systemImage: "hammer.circle")
                     }

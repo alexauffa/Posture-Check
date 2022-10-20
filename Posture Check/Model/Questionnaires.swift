@@ -101,10 +101,10 @@ class Questionnaire: Codable, Identifiable, Equatable {
     /// - Returns: An array of questionnaires
     static func fillQuestionnaires() -> [Questionnaire] {
         return  [
-            Questionnaire(name: "Sociodemographic", url: URL(string: "https://www.apple.com")!, isAvailable: true, type: .oneTime, dateExpectedToBeCompleted: Date.now),
-            Questionnaire(name: "Numeric Pain Rating Scale", url: URL(string: "https://www.apple.com")!, isAvailable: true, type: .everyFifteenDays, dateExpectedToBeCompleted: Date.now),
-            Questionnaire(name: "Auto Perception of Posture", url: URL(string: "https://www.apple.com")!, isAvailable: true ,type: .startAndMonthly, dateExpectedToBeCompleted: Date.now),
-            Questionnaire(name: "Daily Exercise Report", url: URL(string: "https://www.apple.com")!, isAvailable: true ,type: .daily, dateExpectedToBeCompleted: Date.now),
+            Questionnaire(name: "Sociodemographic", url: URL(string: Keys.sociodemographic)!, isAvailable: true, type: .oneTime, dateExpectedToBeCompleted: Date.now),
+            Questionnaire(name: "Numeric Pain Rating Scale", url: URL(string: Keys.numericPainRatingScale)!, isAvailable: true, type: .everyFifteenDays, dateExpectedToBeCompleted: Date.now),
+            Questionnaire(name: "Auto Perception of Posture", url: URL(string: Keys.autoDailyReport)!, isAvailable: true ,type: .startAndMonthly, dateExpectedToBeCompleted: Date.now),
+            Questionnaire(name: "Daily Exercise Report", url: URL(string: Keys.autoDailyReport)!, isAvailable: true ,type: .daily, dateExpectedToBeCompleted: Date.now),
             Questionnaire(name: "Satisfaction", url: URL(string: "https://www.apple.com")!, type: .oneTime, dateExpectedToBeCompleted: Date.now.modifyDateFor(days: 29))
             ]
         }
@@ -162,7 +162,7 @@ class Questionnaire: Codable, Identifiable, Equatable {
                 
             case .startAndMonthly:
                 questionnaires[index].timesUnlockedPreviously += 1
-                questionnaires[index].dateExpectedToBeCompleted = Date.now.modifyDateFor(days: 29)
+                questionnaires[index].dateExpectedToBeCompleted = Date.now.modifyDateFor(days: 30)
                 
             case .daily:
                 questionnaires[index].timesUnlockedPreviously += 1
@@ -187,6 +187,7 @@ class Questionnaire: Codable, Identifiable, Equatable {
         
         objectWillChange.send()
         questionnaires[index].isAvailable = true
+        questionnaires[index].isCompleted = false
     }
     
     func save() {

@@ -15,7 +15,7 @@ import SwiftUI
 struct ExerciseDetailView: View {
     let exercise: Exercise
     @State var isPresentedFromNotification = false
-    
+    @EnvironmentObject var user: User
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -49,7 +49,8 @@ struct ExerciseDetailView: View {
                         Button("Mark as completed") {
                             isPresentedFromNotification = false
                             
-                            // MARK: Mark exercise as completed and add 
+                            // MARK: Mark exercise as completed and add
+                            user.markAsDone(exercise)
                         }
                         .buttonStyle(.borderedProminent)
                     }
@@ -66,6 +67,7 @@ struct ExerciseDetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             ExerciseDetailView(exercise: Exercises().exercises[6])
+                .environmentObject(User())
         }
     }
 }

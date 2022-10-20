@@ -53,6 +53,7 @@ struct ExerciseListView: View {
 struct ListView: View {
     let exercises: [Exercise]
     @State private var searchText = ""
+    @EnvironmentObject var user: User
     
     var filteredExercises: [Exercise] {
         if searchText.isEmpty {
@@ -67,6 +68,7 @@ struct ListView: View {
             ForEach(filteredExercises) { exercise in
                 NavigationLink {
                     ExerciseDetailView(exercise: exercise)
+                        .environmentObject(user)
                 } label: {
                     HStack {
                         Text(exercise.name)
@@ -89,6 +91,7 @@ struct ListView: View {
 
 struct GridView: View {
     let exercises: [Exercise]
+    @EnvironmentObject var user: User
     let columns = [
         GridItem(.adaptive(minimum: 150))
 //        GridItem(.flexible()),
@@ -111,6 +114,7 @@ struct GridView: View {
                 ForEach(filteredExercises) { exercise in
                     NavigationLink {
                         ExerciseDetailView(exercise: exercise)
+                            .environmentObject(user)
                     } label: {
                         ExerciseView(exercise: exercise)
                     }

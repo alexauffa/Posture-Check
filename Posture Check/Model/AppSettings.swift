@@ -12,67 +12,92 @@ import SwiftUI
 @MainActor class AppSettings: ObservableObject {
     @Published var isNewUser: Bool {
         didSet {
-            UserDefaults.standard.set(isNewUser, forKey: Keys.isNewUser)
+            if let encoded = try? JSONEncoder().encode(isNewUser) {
+                UserDefaults.standard.set(encoded, forKey: Keys.isNewUser)
+            }
         }
     }
     
     @Published var dateInstalled: Date {
         didSet {
-            UserDefaults.standard.set(dateInstalled, forKey: Keys.dateInstalled)
+            if let encoded = try? JSONEncoder().encode(dateInstalled){
+                UserDefaults.standard.set(encoded, forKey: Keys.dateInstalled)
+            }
         }
     }
     
-    @Published var appAccent: Color {
-        didSet {
-            UserDefaults.standard.set(appAccent, forKey: Keys.appAccent)
-        }
-    }
+    //    @Published var appAccent: Color {
+    //        didSet {
+    //            if let encoded = try? JSONEncoder().encode(appAccent) {
+    //                UserDefaults.standard.set(encoded, forKey: Keys.appAccent)
+    //            }
+    //        }
+    //    }
     
-    // TODO: Consider 24 hour format
     @Published var activeFrom: DateComponents {
         didSet {
-            UserDefaults.standard.set(activeFrom, forKey: Keys.activeFrom)
+            if let encoded = try? JSONEncoder().encode(activeFrom) {
+                UserDefaults.standard.set(encoded, forKey: Keys.activeFrom)
+            }
         }
     }
     
     @Published var activeUpTo: DateComponents {
         didSet {
-            UserDefaults.standard.set(activeUpTo, forKey: Keys.activeUpTo)
+            if let encoded = try? JSONEncoder().encode(activeUpTo) {
+                UserDefaults.standard.set(encoded, forKey: Keys.activeUpTo)
+            }
         }
     }
     
     init() {
-        // guard let isNewUser = UserDefaults.standard.object(forKey: Keys.isNewUser),
-        //              let dataInstalled = UserDefaults.standard.object(forKey: Keys.dateInstalled),
-        //              let appAccent = UserDefaults.standard.object(forKey: Keys.appAccent),
-        //              let activeFrom = UserDefaults.standard.object(forKey: Keys.activeFrom),
-        //              let activeUpTo = UserDefaults.standard.object(forKey: Keys.activeUpTo) else {
-        //
-        //            self.setDefaultsValues()
-        //            return
-        //        }
-        //
-        //        if let decodedIsNewUser = try? decoder.decode(Bool.self, from: isNewUser) {
-        //            _isNewUser = State(initialValue: decodedIsNewUser)
-        //        }
+        let userDefaults = UserDefaults.standard
         
-        var activeFrom = DateComponents()
-        activeFrom.hour = 8
-        activeFrom.minute = 0
+        guard let savedIsNewUser = userDefaults.data(forKey: Keys.isNewUser),
+              let savedDateInstalled = userDefaults.data(forKey: Keys.dateInstalled),
+              let savedActiveFrom = userDefaults.data(forKey: Keys.activeFrom),
+              let savedActiveUpTo = userDefaults.data(forKey: Keys.activeUpTo)
+        else {
+            // Giving defaults values to the UserDefault
+         
+
+            var activeFromTemp = DateComponents()
+            activeFromTemp.hour = 8
+            activeFromTemp.minute = 0
+            
+            var activeUpToTemp = DateComponents()
+            activeUpToTemp.hour = 17
+            activeUpToTemp.minute = 0
+            
+            
+            self.isNewUser = true
+            self.dateInstalled = Date.now
+            //        self.appAccent = UserDefaults.standard.object(forKey: Keys.appAccent) as? Color ?? .indigo
+            self.activeFrom = activeFromTemp
+            self.activeUpTo = activeUpToTemp
+            
+            print("User Defaults Ready")
+            
+            UserDefaults.standard.synchronize()
+            return
+        }
         
-        var activeUpTo = DateComponents()
-        activeUpTo.hour = 17
-        activeUpTo.minute = 0
+        let decoder = JSONDecoder()
         
-        self.isNewUser = UserDefaults.standard.object(forKey: Keys.isNewUser) as? Bool ?? true
+        let decodedIsNewUserActive = try! decoder.decode(Bool.self, from: savedIsNewUser)
+        self.isNewUser = decodedIsNewUserActive
         
-        self.dateInstalled = UserDefaults.standard.object(forKey: Keys.dateInstalled) as? Date ?? Date.now
         
-        self.appAccent = UserDefaults.standard.object(forKey: Keys.appAccent) as? Color ?? .indigo
+        let decodedDateInstalled = try! decoder.decode(Date.self, from: savedDateInstalled)
+        self.dateInstalled = decodedDateInstalled
         
-        self.activeFrom = UserDefaults.standard.object(forKey: Keys.activeFrom) as? DateComponents ?? activeFrom
         
-        self.activeUpTo = UserDefaults.standard.object(forKey: Keys.activeUpTo) as? DateComponents ?? activeUpTo
+        let decodedActiveFrom = try! decoder.decode(DateComponents.self, from: savedActiveFrom)
+        self.activeFrom = decodedActiveFrom
+        
+        
+        let decodedActiveUpTo = try! decoder.decode(DateComponents.self, from: savedActiveUpTo)
+        self.activeUpTo = decodedActiveUpTo
         
         print("User Defaults Ready")
     }

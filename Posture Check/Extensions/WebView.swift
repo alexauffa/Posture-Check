@@ -17,9 +17,9 @@ struct WebView: UIViewRepresentable {
     
     func updateUIView(_ webView: WKWebView, context: Context) {
         let request = URLRequest(url: url)
-        DispatchQueue.main.async {            
-        webView.load(request)
-        }
+             
+            webView.load(request)
+    
     }
 }
 

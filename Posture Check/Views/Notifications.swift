@@ -7,9 +7,11 @@
 
 import Foundation
 import UserNotifications
-
+import SwiftUI
 
 class Notifications: ObservableObject {
+    @AppStorage(Keys.hasNotificationsEnabled) var hasNotificationsEnabled: Bool = false
+    
     enum NotificationType {
         // Exercise Notifications
         case postureReminder, exercise, restReminder
@@ -186,14 +188,14 @@ class Notifications: ObservableObject {
     
         switch type {
         case .postureReminder:
-            posibleNotification = abs(Int(DateInterval(start: firstDate, end: secondDate).duration / Constants.postureReminderOffset))
+            posibleNotification = Int(DateInterval(start: firstDate, end: secondDate).duration / Constants.postureReminderOffset)
             print("Posible \(posibleNotification) notifications for posture reminder.")
             
         case .exercise:
-            posibleNotification = abs(Int(DateInterval(start: firstDate, end: secondDate).duration / Constants.exerciseReminderOffset))
+            posibleNotification = Int(DateInterval(start: firstDate, end: secondDate).duration / Constants.exerciseReminderOffset)
             print("Posible \(posibleNotification) notifications for exercise reminder.")
         case .restReminder:
-            posibleNotification = abs(Int(DateInterval(start: firstDate, end: secondDate).duration / Constants.restReminderOffset))
+            posibleNotification = Int(DateInterval(start: firstDate, end: secondDate).duration / Constants.restReminderOffset)
             print("Posible \(posibleNotification) notifications for rest reminder.")
             
         case .oneTime:
@@ -218,11 +220,20 @@ class Notifications: ObservableObject {
                 Task {
                     UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
                     await self.generateNotifications()
+                    DispatchQueue.main.async {
+                    self.hasNotificationsEnabled = true
+                    }
                 }
             } else if let error = error {
                 print(error.localizedDescription)
+                DispatchQueue.main.async {
+                self.hasNotificationsEnabled = false
+                }
             } else {
                 print("User has notifications off!")
+                DispatchQueue.main.async {
+                self.hasNotificationsEnabled = false
+                }
             }
         }
     }

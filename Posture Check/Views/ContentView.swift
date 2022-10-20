@@ -15,14 +15,17 @@ import SwiftUI
 import BackgroundTasks
 
 struct ContentView: View {
+    @AppStorage(Keys.hasNotificationsEnabled) var hasNotificationsEnabled: Bool = false
+    @StateObject var appSettings = AppSettings()
     @StateObject var user = User()
     @StateObject var notifications = Notifications()
-    @StateObject var appSettings = AppSettings()
+    @StateObject var questionnaires = Questionnaires()
+   
     
     var body: some View {
         
         Group {
-            if !notifications.userHasGrantedPermissions { // MARK: Fix me - Logic not working
+            if hasNotificationsEnabled {
                 AppTabView()
             } else {
                 NotificationRoadBlockView()
@@ -31,14 +34,18 @@ struct ContentView: View {
         .environmentObject(user)
         .environmentObject(notifications)
         .environmentObject(appSettings)
-        .accentColor(appSettings.appAccent)
+        .environmentObject(questionnaires)
+        
+//        .accentColor(appSettings.appAccent)
         .onAppear { // NOTE: This code should be asked on a earlier view of the app and not here.
             notifications.requestForAuthorization()
             
             Task {
                 await print(UNUserNotificationCenter.current().pendingNotificationRequests())
         }
-            user.questionnaires.unlockQuestionnairesPending()
+            questionnaires.unlockQuestionnairesPending()
+            user.checkIfEligibleForNewExercise()
+            user.achievements.checkIfAnyAchievementIsAchievableWith(user.XP)
         }
     }
 }

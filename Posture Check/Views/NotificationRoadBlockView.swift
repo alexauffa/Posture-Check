@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct NotificationRoadBlockView: View {
-    @EnvironmentObject var notifications: Notifications // Not use Notifications and use UserDefaults maybe
+    @EnvironmentObject var notifications: Notifications
+    let timer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     
     var body: some View {
         VStack {
@@ -25,9 +26,16 @@ struct NotificationRoadBlockView: View {
             Spacer()
             
             Button("Allow") {
-                notifications.requestForAuthorization()
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    if UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    }
+                }
             }
             .buttonStyle(.borderedProminent)
+        }
+        .onReceive(timer) { _ in
+            notifications.requestForAuthorization()
         }
     }
 }

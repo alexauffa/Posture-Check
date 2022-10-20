@@ -20,6 +20,15 @@ class Exercise: Codable, Equatable, Identifiable {
         name + " icon"
     }
     
+    var xp: Int {
+        switch type {
+        case .basic:
+            return 5
+        case .advanced:
+            return 10
+        }
+    }
+    
     init(id: UUID = UUID(), name: String, isUnlocked: Bool, type: ExerciseType, description: String) {
         self.id = id
         self.name = name
@@ -42,30 +51,46 @@ class Exercise: Codable, Equatable, Identifiable {
 }
 
 @MainActor class Exercises: ObservableObject {
-    @Published private(set) var exercises: [Exercise] {
-        didSet {
-            save()
-        }
-    }
+    @Published private(set) var exercises: [Exercise]
     
     var available: [Exercise] {
         exercises.filter { $0.isUnlocked }
     }
     
+    var isDailyExerciseAlreadyDone: Bool {
+        var exercisesDone = 0
+        for exercise in exercises {
+            if exercise.timesDoneToday != 0 {
+                exercisesDone += 1
+            }
+        }
+        return exercisesDone == 3 ? true : false
+    }
+
     let savePath = FileManager.documentsDirectory.appendingPathComponent(Keys.exercises)
     
     init() {
-        exercises = [
+        do {
+            let data = try Data(contentsOf: savePath)
+            exercises = try JSONDecoder().decode([Exercise].self, from: data)
+        } catch {
+            exercises = Exercises.fillExercises()
+            save()
+        }
+    }
+    
+    static func fillExercises() -> [Exercise] {
+        return [
             Exercise(name: "Neck Flexion", isUnlocked: true, type: .basic, description: "Bend your neck down as if you wanted to look at the floor. Place your hands on the back of your head and gently push down on your head until you feel a slight stretch in the back of your neck. Hold this position for 15 to 30 seconds and repeat 3 to 5 times."),
             Exercise(name: "Chin tuck", isUnlocked: true, type: .basic, description: "Flatten the curve of the back of your neck as you bring your chin closer to the front of your neck. Hold the position for 3 seconds. Repeat 10 to 15 times."),
-            Exercise(name: "Trapezius stretch", isUnlocked: false, type: .basic, description: "With your right arm by your side, reach over your head with your left hand to your right ear. Gently pull that side of his head until you feel a stretch in his trapezius, as if she wanted to touch his right shoulder with her left ear. She hold for 15 to 30 seconds and repeat 3 to 5 times. Do the same on the opposite side."),
-            Exercise(name: "Cervical relaxation", isUnlocked: false, type: .basic, description: "Start by looking straight ahead, then bend your neck as if you want to look at the floor or bring your chin to your chest. Hold the position for 3 seconds and then return your head to the starting position. The movement should be slow and rhythmic. Repeat 10 to 15 times."),
-            Exercise(name: "Head rotation and Chin tuck", isUnlocked: false, type: .basic, description: "Flatten the curve of the back of your neck as you bring your chin closer to the front of your neck. Then rotate your head to one side until you feel a stretch on the opposite side from where you rotated and perform to the other side. You can use your fingertips to guide the movement. Hold the position for 5 to 10 seconds. Repeat 5 to 10 times."),
+            Exercise(name: "Trapezius stretch", isUnlocked: true, type: .basic, description: "With your right arm by your side, reach over your head with your left hand to your right ear. Gently pull that side of his head until you feel a stretch in his trapezius, as if she wanted to touch his right shoulder with her left ear. She hold for 15 to 30 seconds and repeat 3 to 5 times. Do the same on the opposite side."),
+            Exercise(name: "Cervical relaxation", isUnlocked: true, type: .basic, description: "Start by looking straight ahead, then bend your neck as if you want to look at the floor or bring your chin to your chest. Hold the position for 3 seconds and then return your head to the starting position. The movement should be slow and rhythmic. Repeat 10 to 15 times."),
+            Exercise(name: "Head rotation and Chin tuck", isUnlocked: true, type: .basic, description: "Flatten the curve of the back of your neck as you bring your chin closer to the front of your neck. Then rotate your head to one side until you feel a stretch on the opposite side from where you rotated and perform to the other side. You can use your fingertips to guide the movement. Hold the position for 5 to 10 seconds. Repeat 5 to 10 times."),
             Exercise(name: "Side bending", isUnlocked: true, type: .basic, description: "Bringing both shoulders down and back, begin looking up with your entire head in a slow, rhythmic motion. Hold for 3 seconds and return to the starting position. Do this 10 to 15 times."),
             Exercise(name: "Upper back stretch", isUnlocked: true, type: .basic, description: "Kneel in front of a chair and place your hands on the chair with your palms facing down and your arm fully extended. Lower your chest toward the floor until you feel a stretch in your upper back and near your armpits. Hold the position for 15 to 30 seconds and repeat 3 to 5 times."),
             Exercise(name: "Cervical Rotation", isUnlocked: true, type: .basic, description: "Start by looking straight ahead and then turn your head to the right side. Hold the position for 3 seconds and return to the starting position. Then repeat the movement by turning your head to the left side. Hold the position for 3 seconds and return to the starting position. Repeat the movement 10 to 15 times on each side."),
-            Exercise(name: "Lumbar stretch", isUnlocked: false, type: .basic, description: "Standing or sitting up straight, reach both arms above your head and interlock your fingers with palms facing out. Keeping your arms straight, inhale deeply and exhale while leaning from the hips to the side without twisting your trunk until you feel a stretch in your back. Hold the position for 15 to 30 seconds and repeat 3 to 5 times."),
-            Exercise(name: "Scapular Retraction", isUnlocked: false, type: .basic, description: "Sitting or standing with both arms at the side of the body forming a 90 degree angle at the elbow, both thumbs pointing to the head, begin to retract both scapulae as if you wanted to bring the scapulae closer together. Hold the position for 3 seconds and repeat 10 to 15 times."),
+            Exercise(name: "Lumbar stretch", isUnlocked: true, type: .basic, description: "Standing or sitting up straight, reach both arms above your head and interlock your fingers with palms facing out. Keeping your arms straight, inhale deeply and exhale while leaning from the hips to the side without twisting your trunk until you feel a stretch in your back. Hold the position for 15 to 30 seconds and repeat 3 to 5 times."),
+            Exercise(name: "Scapular Retraction", isUnlocked: true, type: .basic, description: "Sitting or standing with both arms at the side of the body forming a 90 degree angle at the elbow, both thumbs pointing to the head, begin to retract both scapulae as if you wanted to bring the scapulae closer together. Hold the position for 3 seconds and repeat 10 to 15 times."),
             Exercise(name: "Cervical semicircles", isUnlocked: false, type: .advanced, description: "With both shoulders down and back, look down by flexing your neck as if you wanted to look at the ground. Then roll your head to the side slowly and rhythmically bringing your ear to the shoulder on the same side until you feel a stretch in your neck. Slowly come back to the middle and repeat to the other side. You must hold each side for 3 seconds and repeat the movement 10 to 15 times."),
             Exercise(name: "Chin tuck and trapezius stretch", isUnlocked: false, type: .advanced, description: "With both shoulders down and back, while doing a chin tuck try to bring your ear to your shoulder until you feel a stretch in your neck and hold for 3 seconds. Do the same to the opposite side. You should repeat the movement 10 to 15 times per side."),
             Exercise(name: "Neck extension", isUnlocked: false, type: .advanced, description: "Interlace 4 fingers of both hands behind the neck. Flex your neck and head, as if looking at the ground, hold for 3 seconds, and then extend your neck as if looking at the ceiling, hold for 3 seconds. You should repeat the movement 10 to 15 times."),
@@ -78,23 +103,7 @@ class Exercise: Codable, Equatable, Identifiable {
             Exercise(name: "Scapular in W", isUnlocked: false, type: .advanced, description: "Standing or sitting with your back off the back of the chair, open your arms in a W shape with your palms facing forward. In this position bring both shoulder blades back as if you wanted to bring them together, hold for 3 seconds and return to the starting position. The movement must be rhythmic and controlled. Repeat this 10 to 15 times.")
         ]
     }
-    
-    func load() {
         
-    }
-    
-    func save() {
-        
-    }
-    
-    func checkForPendingExerciseUnlock() {
-        var exercisesDone = 0
-        
-        for exercise in exercises {
-            exercisesDone
-        }
-    }
-    
     func markIsUnlocked(exercise: Exercise){
         guard let index = exercises.firstIndex(of: exercise) else {
             fatalError("Couldn't find the exercises")
@@ -102,5 +111,43 @@ class Exercise: Codable, Equatable, Identifiable {
         
         objectWillChange.send()
         exercises[index].isUnlocked = true
+    }
+    
+    func unlockNewExercise() {
+         let exercisesLocked = exercises.filter {
+             !$0.isUnlocked
+        }
+          
+        if !exercisesLocked.isEmpty {
+            markIsUnlocked(exercise: exercisesLocked.randomElement()!)
+        }
+    }
+    
+    func markAsDone(_ exercise: Exercise) {
+        guard let index = exercises.firstIndex(of: exercise) else {
+            fatalError("Exercise not found")
+        }
+        
+        objectWillChange.send()
+        exercises[index].timesDoneToday += 1
+        save()
+    }
+    
+    func resetExercisesTimeDoneToday() {
+        for exercise in exercises {
+            exercise.timesDoneToday = 0
+            print(exercise.timesDoneToday)
+        }
+        objectWillChange.send()
+        save()
+    }
+    
+    func save() {
+        do {
+            let encodedExercises = try JSONEncoder().encode(exercises)
+            try encodedExercises.write(to: savePath, options: [.atomicWrite, .completeFileProtection])
+        } catch {
+            fatalError("Error saving Ecercises")
+        }
     }
 }

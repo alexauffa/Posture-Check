@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct ConditionalQuestionnaireView: View {
-    @EnvironmentObject var user: User
+    @EnvironmentObject var questionnaires: Questionnaires
 
     var body: some View {
         Group {
-            if user.questionnaires.isAnyQuestionnaireAvailable {
+            if questionnaires.isAnyQuestionnaireAvailable {
                 QuestionnaireView()
-                    .badge(user.questionnaires.questionnairesAvailableCount)
+                    .badge(questionnaires.questionnairesAvailableCount)
             } else {
                 QuestionnaireView()
             }
