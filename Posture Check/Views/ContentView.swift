@@ -18,7 +18,7 @@ struct ContentView: View {
     @AppStorage(Keys.hasNotificationsEnabled) var hasNotificationsEnabled: Bool = false
     @AppStorage(Keys.isNewUser) var isNewUser: Bool = true
     @StateObject var appSettings = AppSettings()
-    @StateObject var user = User()
+    @EnvironmentObject var user: User
     @StateObject var notifications = Notifications()
     @StateObject var questionnaires = Questionnaires()
 

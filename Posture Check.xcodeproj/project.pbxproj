@@ -314,14 +314,14 @@
 			isa = PBXGroup;
 			children = (
 				88D7E41528DC1D0A00E41E21 /* AppSettings.swift */,
-				88505F4128C7BD7E0011BD7F /* Notifications.swift */,
 				8862F9BE28EE71A800E0BF8D /* Achivements.swift */,
+				88A079432901DBCE0036B95C /* AppDelegate.swift */,
+				8814BF2728F759A50068FC7C /* Constants.swift */,
 				88AA052528C79D5400395A97 /* Exercises.swift */,
+				88505F4128C7BD7E0011BD7F /* Notifications.swift */,
 				88D26D9528F5CE8C00E8DA06 /* User.swift */,
 				8888CEA528C2F506008009A0 /* Keys.swift */,
 				8888CE9B28C2AB48008009A0 /* Questionnaires.swift */,
-				8814BF2728F759A50068FC7C /* Constants.swift */,
-				88A079432901DBCE0036B95C /* AppDelegate.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

@@ -15,6 +15,7 @@ struct Posture_CheckApp: App {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.light)
+                .environmentObject(appDelegate.user)
         }
     }
 }

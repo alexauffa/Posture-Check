@@ -92,6 +92,11 @@ struct ProfileView: View {
                                     
                                 })
                                 .offset(y: 5)
+                                .onTapGesture {
+                                    Task {
+                                        await print(UNUserNotificationCenter.current().pendingNotificationRequests())
+                                    }
+                                }
                             
                             VStack {
                                 HStack {

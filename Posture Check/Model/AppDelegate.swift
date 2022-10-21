@@ -12,7 +12,8 @@ import SwiftUI
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    @ObservedObject var user: User = User()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions:
     [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
           // request for the permission
@@ -36,7 +37,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         let exerciseName = userInfo["exerciseName"]
         
-        let user = User()
+//        let user = User()
         
         if response.notification.request.content.categoryIdentifier == Constants.categoryIdentifier {
             switch response.actionIdentifier {
