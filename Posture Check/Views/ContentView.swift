@@ -16,36 +16,37 @@ import BackgroundTasks
 
 struct ContentView: View {
     @AppStorage(Keys.hasNotificationsEnabled) var hasNotificationsEnabled: Bool = false
+    @AppStorage(Keys.isNewUser) var isNewUser: Bool = true
     @StateObject var appSettings = AppSettings()
     @StateObject var user = User()
     @StateObject var notifications = Notifications()
     @StateObject var questionnaires = Questionnaires()
-   
-    
+
     var body: some View {
-        
-        Group {
-            if hasNotificationsEnabled {
-                AppTabView()
-            } else {
-                NotificationRoadBlockView()
+        if isNewUser {
+            WelcomeView()
+        } else {
+            Group {
+                if hasNotificationsEnabled {
+                    AppTabView()
+                } else {
+                    NotificationRoadBlockView()
+                }
             }
-        }
-        .environmentObject(user)
-        .environmentObject(notifications)
-        .environmentObject(appSettings)
-        .environmentObject(questionnaires)
-        
-//        .accentColor(appSettings.appAccent)
-        .onAppear { // NOTE: This code should be asked on a earlier view of the app and not here.
-            notifications.requestForAuthorization()
-            
-            Task {
-                await print(UNUserNotificationCenter.current().pendingNotificationRequests())
-        }
-            questionnaires.unlockQuestionnairesPending()
-            user.checkIfEligibleForNewExercise()
-            user.achievements.checkIfAnyAchievementIsAchievableWith(user.XP)
+            .environmentObject(user)
+            .environmentObject(notifications)
+            .environmentObject(appSettings)
+            .environmentObject(questionnaires)
+            .onAppear {
+                notifications.requestForAuthorization()
+                
+                Task {
+                    await print(UNUserNotificationCenter.current().pendingNotificationRequests())
+            }
+                questionnaires.unlockQuestionnairesPending()
+                user.checkIfEligibleForNewExercise()
+                user.achievements.checkIfAnyAchievementIsAchievableWith(user.XP)
+            }
         }
     }
 }

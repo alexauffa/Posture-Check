@@ -67,6 +67,13 @@ struct ProfileView: View {
         }
     }
     
+//    var dateProgress: String {
+//        let installedDate = settings.dateInstalled
+//        let targetDate = installedDate.modifyDateFor(days: 45)
+//        
+//        return String(Calendar(identifier: .chinese).numberOfDaysBetween(installedDate, and: targetDate))
+//    }
+    
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
@@ -108,9 +115,9 @@ struct ProfileView: View {
                                     
                                     
                                     if #available(iOS 16.0, *) {
-                                        Gauge(value: 20.0 / 45.0) {
+                                        Gauge(value: 1.0 / 45.0) {
                                             HStack {
-                                                Text("Day 45 of 45")
+                                                Text("Day 1 of 45")
                                                 Spacer()
                                             }
                                         }
@@ -176,6 +183,7 @@ struct ProfileView: View {
             }
         }
     }
+    
 }
 
 struct AchievementView: View {
@@ -209,7 +217,7 @@ struct AchievementView: View {
                                         .foregroundColor(.white.opacity(0.8))
                                         .frame(width: 115,height: 115)
                                     // Check Color Scheme
-                                    //                                        .foregroundColor(.black.opacity(0.8))
+                                    //                  .foregroundColor(.black.opacity(0.8))
                                 })
                             
                             Text("Not Obtained")

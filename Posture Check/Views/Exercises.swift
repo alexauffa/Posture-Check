@@ -15,7 +15,6 @@ class Exercise: Codable, Equatable, Identifiable {
     var type: ExerciseType
     let description: String
     var timesDoneToday = 0
-    var pendingToMarkAsCompleted = false // MARK: Investigate
     var icon: String {
         name + " icon"
     }
@@ -59,11 +58,13 @@ class Exercise: Codable, Equatable, Identifiable {
     
     var isDailyExerciseAlreadyDone: Bool {
         var exercisesDone = 0
+        
         for exercise in exercises {
             if exercise.timesDoneToday != 0 {
-                exercisesDone += 1
+                exercisesDone += exercise.timesDoneToday
             }
         }
+        print("Exercises Done Today: \(exercisesDone)")
         return exercisesDone == 3 ? true : false
     }
 
@@ -76,6 +77,58 @@ class Exercise: Codable, Equatable, Identifiable {
         } catch {
             exercises = Exercises.fillExercises()
             save()
+        }
+    }
+            
+    func markIsUnlocked(exercise: Exercise){
+        guard let index = exercises.firstIndex(of: exercise) else {
+            fatalError("Couldn't find the exercises")
+        }
+        
+        objectWillChange.send()
+        exercises[index].isUnlocked = true
+    }
+    
+    func unlockNewExercise() {
+        
+         let exercisesLocked = exercises.filter {
+             !$0.isUnlocked
+        }
+          
+        if !exercisesLocked.isEmpty {
+            markIsUnlocked(exercise: exercisesLocked.randomElement()!)
+            print("Unlocked New exercise!")
+        }
+    }
+    
+    func markAsDone(_ exercise: Exercise) {
+        guard let index = exercises.firstIndex(of: exercise) else {
+            fatalError("Exercise not found")
+        }
+        
+        print(exercises[index].timesDoneToday)
+        objectWillChange.send()
+        exercises[index].timesDoneToday += 1
+        print(exercises[index].timesDoneToday)
+
+        save()
+    }
+    
+    func resetExercisesTimeDoneToday() {
+        for exercise in exercises {
+            exercise.timesDoneToday = 0
+            print(exercise.timesDoneToday)
+        }
+        objectWillChange.send()
+        save()
+    }
+    
+    func save() {
+        do {
+            let encodedExercises = try JSONEncoder().encode(exercises)
+            try encodedExercises.write(to: savePath, options: [.atomicWrite, .completeFileProtection])
+        } catch {
+            fatalError("Error saving Exercises")
         }
     }
     
@@ -102,52 +155,5 @@ class Exercise: Codable, Equatable, Identifiable {
             Exercise(name: "Chest expand", isUnlocked: false, type: .advanced, description: "Standing with both feet shoulder-width apart, cross both arms at wrist level in front of your hips. Inhale deeply as you abduct both arms, as if you are spreading wings, until your hands meet on top of your head. Hold 3 seconds. Slowly exhale as you adduct your arms, as if closing your wings, back to the starting position. repeat 10 times."),
             Exercise(name: "Scapular in W", isUnlocked: false, type: .advanced, description: "Standing or sitting with your back off the back of the chair, open your arms in a W shape with your palms facing forward. In this position bring both shoulder blades back as if you wanted to bring them together, hold for 3 seconds and return to the starting position. The movement must be rhythmic and controlled. Repeat this 10 to 15 times.")
         ]
-    }
-        
-    func markIsUnlocked(exercise: Exercise){
-        guard let index = exercises.firstIndex(of: exercise) else {
-            fatalError("Couldn't find the exercises")
-        }
-        
-        objectWillChange.send()
-        exercises[index].isUnlocked = true
-    }
-    
-    func unlockNewExercise() {
-         let exercisesLocked = exercises.filter {
-             !$0.isUnlocked
-        }
-          
-        if !exercisesLocked.isEmpty {
-            markIsUnlocked(exercise: exercisesLocked.randomElement()!)
-        }
-    }
-    
-    func markAsDone(_ exercise: Exercise) {
-        guard let index = exercises.firstIndex(of: exercise) else {
-            fatalError("Exercise not found")
-        }
-        
-        objectWillChange.send()
-        exercises[index].timesDoneToday += 1
-        save()
-    }
-    
-    func resetExercisesTimeDoneToday() {
-        for exercise in exercises {
-            exercise.timesDoneToday = 0
-            print(exercise.timesDoneToday)
-        }
-        objectWillChange.send()
-        save()
-    }
-    
-    func save() {
-        do {
-            let encodedExercises = try JSONEncoder().encode(exercises)
-            try encodedExercises.write(to: savePath, options: [.atomicWrite, .completeFileProtection])
-        } catch {
-            fatalError("Error saving Ecercises")
-        }
     }
 }

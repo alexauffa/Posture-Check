@@ -16,13 +16,11 @@ struct ExerciseDetailView: View {
     let exercise: Exercise
     @State var isPresentedFromNotification = false
     @EnvironmentObject var user: User
+    @Environment(\.dismiss) var dismiss
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
-//                Image(exercise.icon)
-//                    .resizable()
-//                    .scaledToFit()
-                
                 GifImage(exercise.name)
                     .frame(height: geometry.size.height * 0.35)
             
@@ -45,12 +43,11 @@ struct ExerciseDetailView: View {
                 }
                 
                 Group {
-                    if isPresentedFromNotification || exercise.pendingToMarkAsCompleted {
+                    if isPresentedFromNotification {
                         Button("Mark as completed") {
                             isPresentedFromNotification = false
-                            
-                            // MARK: Mark exercise as completed and add
                             user.markAsDone(exercise)
+                            dismiss()
                         }
                         .buttonStyle(.borderedProminent)
                     }
@@ -66,7 +63,7 @@ struct ExerciseDetailView: View {
 struct ExerciseDetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            ExerciseDetailView(exercise: Exercises().exercises[6])
+            ExerciseDetailView(exercise: Exercises().exercises[6], isPresentedFromNotification: true)
                 .environmentObject(User())
         }
     }

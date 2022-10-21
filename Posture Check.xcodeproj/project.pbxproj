@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8810E76328E6A581001F3374 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8810E76228E6A581001F3374 /* SettingsView.swift */; };
 		8814BF2828F759A50068FC7C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8814BF2728F759A50068FC7C /* Constants.swift */; };
+		88209A6F290251C000A0D0BA /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88209A6E290251C000A0D0BA /* WelcomeView.swift */; };
 		882A7F6528E7C478000075F4 /* GIFImageViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882A7F6428E7C478000075F4 /* GIFImageViewWrapper.swift */; };
 		882A7F7528E7CBBC000075F4 /* Lumbar stretch.gif in Resources */ = {isa = PBXBuildFile; fileRef = 882A7F6B28E7CBBA000075F4 /* Lumbar stretch.gif */; };
 		882A7F7628E7CBBC000075F4 /* Side bending.gif in Resources */ = {isa = PBXBuildFile; fileRef = 882A7F6C28E7CBBA000075F4 /* Side bending.gif */; };
@@ -31,7 +32,6 @@
 		882A7F9328E7CCFD000075F4 /* Isometric resistance.gif in Resources */ = {isa = PBXBuildFile; fileRef = 882A7F8928E7CCFD000075F4 /* Isometric resistance.gif */; };
 		882A7F9428E7CCFD000075F4 /* Neck extension.gif in Resources */ = {isa = PBXBuildFile; fileRef = 882A7F8A28E7CCFD000075F4 /* Neck extension.gif */; };
 		882A7F9628E80141000075F4 /* AppTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882A7F9528E80141000075F4 /* AppTabView.swift */; };
-		884BB27C28E6BDF500BE3A91 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884BB27B28E6BDF500BE3A91 /* View.swift */; };
 		884BB27E28E6C0CB00BE3A91 /* ConditionalQuestionnaireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884BB27D28E6C0CB00BE3A91 /* ConditionalQuestionnaireView.swift */; };
 		88505F4228C7BD7E0011BD7F /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88505F4128C7BD7E0011BD7F /* Notifications.swift */; };
 		8854142728E77A39007A6BC1 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8854142628E77A39007A6BC1 /* Date.swift */; };
@@ -49,6 +49,8 @@
 		8888CE9C28C2AB48008009A0 /* Questionnaires.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8888CE9B28C2AB48008009A0 /* Questionnaires.swift */; };
 		8888CEA128C2B4EE008009A0 /* FIleManager-DocumentsDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8888CEA028C2B4EE008009A0 /* FIleManager-DocumentsDirectory.swift */; };
 		8888CEA628C2F506008009A0 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8888CEA528C2F506008009A0 /* Keys.swift */; };
+		88A079442901DBCE0036B95C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A079432901DBCE0036B95C /* AppDelegate.swift */; };
+		88A079462902096C0036B95C /* Calendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A079452902096C0036B95C /* Calendar.swift */; };
 		88AA052628C79D5400395A97 /* Exercises.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AA052528C79D5400395A97 /* Exercises.swift */; };
 		88CD15BB28F277E20012FB55 /* Upper trapezius icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 88CD15BA28F277E20012FB55 /* Upper trapezius icon.png */; };
 		88CD15BD28F277FC0012FB55 /* Upper back stretch icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 88CD15BC28F277FC0012FB55 /* Upper back stretch icon.png */; };
@@ -79,6 +81,7 @@
 /* Begin PBXFileReference section */
 		8810E76228E6A581001F3374 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		8814BF2728F759A50068FC7C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		88209A6E290251C000A0D0BA /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		882A7F6428E7C478000075F4 /* GIFImageViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFImageViewWrapper.swift; sourceTree = "<group>"; };
 		882A7F6B28E7CBBA000075F4 /* Lumbar stretch.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "Lumbar stretch.gif"; sourceTree = "<group>"; };
 		882A7F6C28E7CBBA000075F4 /* Side bending.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "Side bending.gif"; sourceTree = "<group>"; };
@@ -101,7 +104,6 @@
 		882A7F8928E7CCFD000075F4 /* Isometric resistance.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "Isometric resistance.gif"; sourceTree = "<group>"; };
 		882A7F8A28E7CCFD000075F4 /* Neck extension.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "Neck extension.gif"; sourceTree = "<group>"; };
 		882A7F9528E80141000075F4 /* AppTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabView.swift; sourceTree = "<group>"; };
-		884BB27B28E6BDF500BE3A91 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		884BB27D28E6C0CB00BE3A91 /* ConditionalQuestionnaireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalQuestionnaireView.swift; sourceTree = "<group>"; };
 		88505F4128C7BD7E0011BD7F /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Notifications.swift; path = "Posture Check/Views/Notifications.swift"; sourceTree = SOURCE_ROOT; };
 		8854142628E77A39007A6BC1 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
@@ -121,6 +123,8 @@
 		8888CE9B28C2AB48008009A0 /* Questionnaires.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Questionnaires.swift; sourceTree = "<group>"; };
 		8888CEA028C2B4EE008009A0 /* FIleManager-DocumentsDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FIleManager-DocumentsDirectory.swift"; sourceTree = "<group>"; };
 		8888CEA528C2F506008009A0 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		88A079432901DBCE0036B95C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		88A079452902096C0036B95C /* Calendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Calendar.swift; sourceTree = "<group>"; };
 		88AA052528C79D5400395A97 /* Exercises.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Exercises.swift; path = "Posture Check/Views/Exercises.swift"; sourceTree = SOURCE_ROOT; };
 		88CD15BA28F277E20012FB55 /* Upper trapezius icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Upper trapezius icon.png"; sourceTree = "<group>"; };
 		88CD15BC28F277FC0012FB55 /* Upper back stretch icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Upper back stretch icon.png"; sourceTree = "<group>"; };
@@ -301,6 +305,7 @@
 				882A7F6428E7C478000075F4 /* GIFImageViewWrapper.swift */,
 				88F31E4B28E95EB1000FA8AA /* NotificationRoadBlockView.swift */,
 				88F31E4928E950DB000FA8AA /* WebView.swift */,
+				88209A6E290251C000A0D0BA /* WelcomeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -316,6 +321,7 @@
 				8888CEA528C2F506008009A0 /* Keys.swift */,
 				8888CE9B28C2AB48008009A0 /* Questionnaires.swift */,
 				8814BF2728F759A50068FC7C /* Constants.swift */,
+				88A079432901DBCE0036B95C /* AppDelegate.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -324,8 +330,8 @@
 			isa = PBXGroup;
 			children = (
 				8888CEA028C2B4EE008009A0 /* FIleManager-DocumentsDirectory.swift */,
-				884BB27B28E6BDF500BE3A91 /* View.swift */,
 				8854142628E77A39007A6BC1 /* Date.swift */,
+				88A079452902096C0036B95C /* Calendar.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -444,11 +450,13 @@
 				88D7E41628DC1D0A00E41E21 /* AppSettings.swift in Sources */,
 				88F31E4A28E950DB000FA8AA /* WebView.swift in Sources */,
 				882A7F6528E7C478000075F4 /* GIFImageViewWrapper.swift in Sources */,
+				88209A6F290251C000A0D0BA /* WelcomeView.swift in Sources */,
 				88505F4228C7BD7E0011BD7F /* Notifications.swift in Sources */,
-				884BB27C28E6BDF500BE3A91 /* View.swift in Sources */,
 				88667C1028BD23FE003816E0 /* ProfileView.swift in Sources */,
 				88667C1228BD25E2003816E0 /* ExerciseDetailView.swift in Sources */,
+				88A079442901DBCE0036B95C /* AppDelegate.swift in Sources */,
 				88582B8A28BAD04300FA565F /* ContentView.swift in Sources */,
+				88A079462902096C0036B95C /* Calendar.swift in Sources */,
 				8854142728E77A39007A6BC1 /* Date.swift in Sources */,
 				8862F9C528EE728000E0BF8D /* ProgressBarView.swift in Sources */,
 				88667C0E28BD2289003816E0 /* ExerciseListView.swift in Sources */,

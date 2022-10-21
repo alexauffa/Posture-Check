@@ -14,7 +14,7 @@ class Notifications: ObservableObject {
     
     enum NotificationType {
         // Exercise Notifications
-        case postureReminder, exercise, restReminder
+        case postureReminder, exerciseReminder, restReminder
         // Questionnaire Notifications
         case oneTime, everyFifteenDays, startAndEnd, daily, satisfaction
     }
@@ -42,18 +42,20 @@ class Notifications: ObservableObject {
         }
         return status
     }
-    
+
     func getNotificationTitle(of notificationType: NotificationType) -> String {
         switch notificationType {
         case .postureReminder:
             return Constants.postureRemindersTitles.randomElement() ?? "Posture Reminder"
             
-        case .exercise:
+        case .exerciseReminder:
             return Constants.exercisesRemindersTitles.randomElement() ?? "Exercise time 🧘🏻‍♂️"
             
         case .restReminder:
             return Constants.restReminderTitles.randomElement() ?? "Rest Reminder 💤"
             
+        case .daily:
+            return Constants.dailyRemindersTitles.randomElement() ?? "Research Questionnaire Reminder"
         default:
             return "" // To be set
         }
@@ -64,11 +66,13 @@ class Notifications: ObservableObject {
         case .postureReminder:
             return Constants.postureRemindersDescriptions.randomElement() ?? "Remember to maintain the phone at eye level to avoid tech neck syndrome"
             
-        case .exercise:
+        case .exerciseReminder:
             return Constants.exercisesRemindersDescription.randomElement() ?? "Long press the notification to mark as completed or view exercise instructions"
             
         case .restReminder:
             return Constants.restReminderDescription.randomElement() ?? "A rest of 20 minutes is recommended for this period of usage"
+        case .daily:
+            return Constants.dailyRemindersDescriptions.randomElement() ?? "This help us with our research. Thank You!"
             
         default:
             return "A new questionnaire is available!"
@@ -77,16 +81,17 @@ class Notifications: ObservableObject {
     
     func generateNotifications() async {
         await generateNotificationsOf(type: .postureReminder)
-        await generateNotificationsOf(type: .exercise)
+        await generateNotificationsOf(type: .exerciseReminder)
         await generateNotificationsOf(type: .restReminder)
+        await generateNotificationsOf(type: .daily)
     }
     
     func generateNotificationsOf(type notificationType: NotificationType) async {
         
         let content = await generateNotificationContentFor(notificationType)
-       
+        
         let triggers = await getTriggersFor(notificationType)
-
+        
         for trigger in triggers {
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
             do {
@@ -103,18 +108,26 @@ class Notifications: ObservableObject {
         content.subtitle = getNotificationDescription(of: type)
         content.sound = .default
         
-        if type == .exercise {
+        if type == .exerciseReminder {
             let exerciseForNotification = await Exercises().available.randomElement()! //MARK: Todo - check if you can avoid repeating exercises
+            content.userInfo = ["exerciseName": exerciseForNotification.name]
             
-            let completedAction = UNNotificationAction(identifier: "exerciseCompleted", title: "Mark as completed")
+            let completedAction = UNNotificationAction(identifier: Constants.completeExerciseAction,
+                                                       title: "Mark as completed",
+                                                       options: [])
             
-            let viewGifAction = UNNotificationAction(identifier: "viewGif", title: "View exercise instructions")
+//            let viewGifAction = UNNotificationAction(identifier: Constants.viewGifAction,
+//                                                     title: "View exercise instructions",
+//                                                     options: [])
             
-            let category = UNNotificationCategory(identifier: "exerciseCategory", actions: [completedAction, viewGifAction], intentIdentifiers: [""])
+            let exerciseCategory = UNNotificationCategory(identifier: "exerciseCategory",
+                                                  actions: [completedAction],
+                                                  intentIdentifiers: [""],
+                                                options: [])
             
-            UNUserNotificationCenter.current().setNotificationCategories([category])
+            UNUserNotificationCenter.current().setNotificationCategories([exerciseCategory])
             
-            content.categoryIdentifier = "exerciseCategory"
+            content.categoryIdentifier = Constants.categoryIdentifier
             
             let imageURL = Bundle.main.url(forResource: exerciseForNotification.icon, withExtension: "png")!
             
@@ -142,7 +155,7 @@ class Notifications: ObservableObject {
                 )
             }
             
-        case .exercise:
+        case .exerciseReminder:
             for index in 1..<maxNotificationAllowedBetween(startDate, and: endDate, type: type) + 1 {
                 let offsetedDate = startDate.addingTimeInterval(Double(index) * Constants.exerciseReminderOffset)
                 print(offsetedDate.formatted())
@@ -169,7 +182,7 @@ class Notifications: ObservableObject {
         case .startAndEnd:
             break
         case .daily:
-            break
+            return await [UNCalendarNotificationTrigger(dateMatching: AppSettings().activeUpTo, repeats: true)]
         case .satisfaction:
             break
         }
@@ -181,17 +194,17 @@ class Notifications: ObservableObject {
         var posibleNotification = 0
         let firstDate = date1
         var secondDate = date2
-                
+        
         if firstDate > secondDate { // 11pm > 8am true
             secondDate = secondDate.modifyDateFor(days: 1)
         }
-    
+        
         switch type {
         case .postureReminder:
             posibleNotification = Int(DateInterval(start: firstDate, end: secondDate).duration / Constants.postureReminderOffset)
             print("Posible \(posibleNotification) notifications for posture reminder.")
             
-        case .exercise:
+        case .exerciseReminder:
             posibleNotification = Int(DateInterval(start: firstDate, end: secondDate).duration / Constants.exerciseReminderOffset)
             print("Posible \(posibleNotification) notifications for exercise reminder.")
         case .restReminder:
@@ -221,18 +234,18 @@ class Notifications: ObservableObject {
                     UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
                     await self.generateNotifications()
                     DispatchQueue.main.async {
-                    self.hasNotificationsEnabled = true
+                        self.hasNotificationsEnabled = true
                     }
                 }
             } else if let error = error {
                 print(error.localizedDescription)
                 DispatchQueue.main.async {
-                self.hasNotificationsEnabled = false
+                    self.hasNotificationsEnabled = false
                 }
             } else {
                 print("User has notifications off!")
                 DispatchQueue.main.async {
-                self.hasNotificationsEnabled = false
+                    self.hasNotificationsEnabled = false
                 }
             }
         }
@@ -262,24 +275,33 @@ class Notifications: ObservableObject {
         }
     }
     
-     func devgenerateNotificationOfExercise() async {
+    func devgenerateNotificationOfExercise() async {
         let center = UNUserNotificationCenter.current()
         
-        let notificationTitle = getNotificationTitle(of: .exercise)
-        let notificationSub = getNotificationDescription(of: .exercise)
+        let notificationTitle = getNotificationTitle(of: .exerciseReminder)
+        let notificationSub = getNotificationDescription(of: .exerciseReminder)
         let exerciseForNotification = await Exercises().available.randomElement()!
         
-        let markAsCompleteAction = UNNotificationAction(identifier: "exerciseCompleted", title: "Mark as Completed")
-        let viewGifAction = UNNotificationAction(identifier: "viewGif", title: "View exercise instructions")
+        let completedAction = UNNotificationAction(identifier: Constants.completeExerciseAction,
+                                                   title: "Mark as completed",
+                                                   options: [])
         
-        let category = UNNotificationCategory(identifier: "exerciseCategory", actions: [markAsCompleteAction, viewGifAction], intentIdentifiers: [""])
-        center.setNotificationCategories([category])
+//        let viewGifAction = UNNotificationAction(identifier: Constants.viewGifAction,
+//                                                 title: "View exercise instructions",
+//                                                 options: [])
+        
+        let exerciseCategory = UNNotificationCategory(identifier: "exerciseCategory",
+                                              actions: [completedAction],
+                                              intentIdentifiers: [""],
+                                            options: [])
+        center.setNotificationCategories([exerciseCategory])
         
         let content = UNMutableNotificationContent()
         content.title = notificationTitle
         content.subtitle = notificationSub
         content.sound = .default
         content.categoryIdentifier = "exerciseCategory"
+        content.userInfo = ["exerciseName": exerciseForNotification.name]
         guard let imageURL = Bundle.main.url(forResource: exerciseForNotification.icon, withExtension: "png") else {
             print("Image called: \(exerciseForNotification.icon)")
             print("Image not found!")

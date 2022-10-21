@@ -21,10 +21,12 @@ import SwiftUI
     }
     
     func markAsDone(_ exercise: Exercise) {
+        objectWillChange.send()
         XP += exercise.xp
         exercises.markAsDone(exercise)
         achievements.checkIfAnyAchievementIsAchievableWith(XP)
         checkIfEligibleForNewExercise()
+        save()
     }
     
     init() {

@@ -188,6 +188,7 @@ class Questionnaire: Codable, Identifiable, Equatable {
         objectWillChange.send()
         questionnaires[index].isAvailable = true
         questionnaires[index].isCompleted = false
+        save()
     }
     
     func save() {

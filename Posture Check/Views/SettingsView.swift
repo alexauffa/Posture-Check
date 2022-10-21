@@ -12,44 +12,72 @@ struct SettingsView: View {
     @State var from: Date
     @State var UpTo: Date
     
+    var postureReminders: Int {
+        return Notifications().maxNotificationAllowedBetween(from, and: UpTo, type: .postureReminder)
+    }
+    
+    var exerciseReminders: Int {
+        return Notifications().maxNotificationAllowedBetween(from, and: UpTo, type: .exerciseReminder)
+    }
+    
+    var restReminders: Int {
+        return Notifications().maxNotificationAllowedBetween(from, and: UpTo, type: .restReminder)
+    }
+    
     init() {
         let appSettings = AppSettings()
         _from = State(initialValue: Calendar.autoupdatingCurrent.date(from: appSettings.activeFrom) ?? Date.now)
         _UpTo = State(initialValue: Calendar.autoupdatingCurrent.date(from: appSettings.activeUpTo) ?? Date.now)
     }
-    //MARK: Fix/Add saving to UserDefaults and remove previous notifications and create new ones.
+    
     var body: some View {
         NavigationView {
-            Form {
-                Section {
-                    DatePicker(selection: $from, displayedComponents: .hourAndMinute, label: { SettingsRowView( title: "Start Stretching", systemImageName: "bell")
-                    })
-                }
-            header: {
-                Text("Notifications")
-                    .font(.subheadline)
-            }
+            VStack {
                 
-                Section {
-//                    Stepper("\(stretchingTime.formatted()) hours", value: $stretchingTime, in: 6...9, step: 1.00)
-                    DatePicker("End", selection: $UpTo, displayedComponents: .hourAndMinute)
+                Image(systemName: "bell.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 70, height: 70)
+                    .foregroundColor(.primary)
+                
+                Text("Active Hours")
+                    .font(.title)
+
+                Form {
+                    Section {
+                        DatePicker("Starting from", selection: $from, displayedComponents: .hourAndMinute)
+                    }
+                    
+                    Section {
+                        DatePicker("Ending at", selection: $UpTo, displayedComponents: .hourAndMinute)
+                    } footer: {
+                        Text("At this configuration you will receive:\n")
+                        +
+                        Text("\(postureReminders) Posture Reminders\n")
+                        +
+                        Text("\(exerciseReminders) Exercises Reminders\n")
+                        +
+                        Text("\(restReminders) Rest Reminders\n")
+                    }
                 }
-            header: {
-                Text("Stretching time select:")
-                    .font(.subheadline)
-            }
             }
             .navigationTitle(Text("Settings"))
         }
         .onChange(of: from) { newValue in
             let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.hour, .minute], from: from)
-            print(dateComponents)
-            print("Cambie from")
+            appSettings.setActiveHours(from: dateComponents)
+            
+            Task {
+                await Notifications().generateNotifications()
+            }
         }
         .onChange(of: UpTo) { newValue in
-            let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.hour, .minute], from: from)
-            print(dateComponents)
-            print("Cambie upto")
+            let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.hour, .minute], from: UpTo)
+            appSettings.setActiveHours(upTo: dateComponents)
+            
+            Task {
+                await Notifications().generateNotifications()
+            }
         }
     }
 }
