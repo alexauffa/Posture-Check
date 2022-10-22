@@ -80,6 +80,7 @@ class Notifications: ObservableObject {
     }
     
     func generateNotifications() async {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         await generateNotificationsOf(type: .postureReminder)
         await generateNotificationsOf(type: .exerciseReminder)
         await generateNotificationsOf(type: .restReminder)
